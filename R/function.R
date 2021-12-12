@@ -1,18 +1,20 @@
 
-# newDB ------------------------------------------------------------------------
+# public ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #' newDB
 #' @description Function generates a new \link{R6} database handling interface with \link{DBI} backend.
 #' For more information, see \link[rocker:rocker]{rocker} class description.
+#' @param verbose TRUE or FALSE. Switch text output on / off.
+#' @param id Optional object ID/name
 #' @param ... Not used yet
 #' @return New instance of rocker class
 #' @examples
 #' db <- rocker::newDB()
 #' @export
-newDB <- function(...)
-  return(rocker$new(...))
+newDB <- function(verbose = TRUE, id = NULL, ...)
+  return(rocker$new(verbose, id, ...))
 
-# encrypt ----------------------------------------------------------------------
+# encrypt ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 generateKey <- function()
   return(as.raw(sample(0:255, 32, replace = TRUE)))
@@ -23,7 +25,7 @@ encrypt <- function(OBJECT, KEY)
 decrypt <- function(OBJECT, KEY)
   return(safer::decrypt_object(OBJECT, key = KEY))
 
-# comm -------------------------------------------------------------------------
+# comm ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 error <- function(TEXT, WARNING = FALSE) {
   if (WARNING) {
@@ -33,7 +35,7 @@ error <- function(TEXT, WARNING = FALSE) {
   }
 }
 
-# test -------------------------------------------------------------------------
+# test ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 testPackages <- function(PACKAGES) {
   INSTALLED <- list()
@@ -42,9 +44,9 @@ testPackages <- function(PACKAGES) {
   return(INSTALLED)
 }
 
-testPackageFunction <- function(PACKAGE, FUNCTION) {
+testPackageFunctions <- function(PACKAGE, FUNCTIONS) {
   AVAIABLE <- list()
-  for (i in FUNCTION) {
+  for (i in FUNCTIONS) {
     AVAIABLE[[i]] <- tryCatch(
       {
         eval(parse(text = paste0(PACKAGE, "::", i)))

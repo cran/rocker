@@ -1,0 +1,101 @@
+# New *rocker* class object
+
+Create new *rocker* database handling object
+
+Option 1
+
+```{r}
+db <- rocker::newDB() # New database handling object
+```
+
+Option 2
+
+```{r}
+db <- rocker::rocker$new() # New database handling object
+```
+
+__Terminal output__
+
+Controlling terminal output
+
+```{r}
+db <- rocker::newDB(verbose = TRUE) # New database handling object
+db$setupPostgreSQL()
+db$unloadDriver()
+```
+
+```{r}
+db$verbose <- FALSE # Terminal output off
+db$setupPostgreSQL()
+db$unloadDriver()
+```
+
+```{r}
+db$verbose <- TRUE # Terminal output on (default)
+db$setupPostgreSQL()
+db$unloadDriver()
+```
+
+Structure of terminal output
+
+```
+Dctr | Driver load RSQLite
+D                          = Driver     (D = loaded,    d = not set)
+ c                         = Connection (C = opened,    c = closed)
+  t                        = Transation (T = active,    t = no tranastion)
+   r                       = Result     (R = available, r = no result)
+       Driver load RSQLite = Message text
+
+```
+
+__Optional object ID__
+
+Optionally, rocker object can be labeled with an ID. This can be helpful in case terminal output of multiple rocker objects need to be distinguished.
+
+```{r}
+db1 <- rocker::newDB(id = "myDB 1") # New database handling object with ID
+db2 <- rocker::newDB(id = "myDB 2") # New database handling object with ID
+db1$setupPostgreSQL()
+db2$setupMariaDB()
+db1$unloadDriver()
+db2$unloadDriver()
+```
+
+```{r}
+db1$id <- NULL # Remove ID
+db1$setupSQLite()
+db1$unloadDriver()
+```
+
+```{r}
+db1$id <- "newID 1" # Add new ID
+db1$setupSQLite()
+db1$unloadDriver()
+```
+
+__Object properties__
+
+Object properties are stored in the info field and can be displayed by print function.
+
+```{r}
+db <- rocker::newDB() # New database handling object
+db$setupPostgreSQL()
+db$info
+```
+
+```{r}
+db
+```
+
+```{r}
+db$print()
+```
+
+```{r}
+print(db)
+```
+
+```{r}
+db$unloadDriver()
+```
+

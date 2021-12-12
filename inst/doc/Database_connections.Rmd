@@ -1,0 +1,21 @@
+---
+title: "Inintiation of SQL database connections in R6 rocker class"
+author: "Nikolaus Pawlowski"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Inintiation of SQL database connections in R6 rocker class}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+---
+
+```{r child="../man/fragments/Connection.Rmd"} 
+```

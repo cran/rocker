@@ -1,0 +1,21 @@
+---
+title: "DBI package objects and functions in R6 rocker class"
+author: "Nikolaus Pawlowski"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{DBI package objects and functions in R6 rocker class}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+---
+
+```{r child="../man/fragments/DBI.Rmd"} 
+```
