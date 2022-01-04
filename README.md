@@ -32,6 +32,7 @@ status](https://www.r-pkg.org/badges/version/rocker)](https://cran.r-project.org
 [![GitHub
 version](https://img.shields.io/badge/devel%20version-GitHub-yellow.svg)](https://github.com/nikolaus77/rocker)
 [![R-CMD-check](https://github.com/nikolaus77/rocker/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/nikolaus77/rocker/actions/workflows/check-standard.yaml)
+[![codecov](https://codecov.io/gh/nikolaus77/rocker/branch/main/graph/badge.svg)](https://app.codecov.io/gh/nikolaus77/rocker)
 [![License:
 MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 <!-- badges: end -->
@@ -177,49 +178,153 @@ db$info
 
 ``` r
 db
-#> id          null
-#> package     RPostgres
-#> host        127.0.0.1
-#> port        5432
-#> dbname      mydb
-#> driver      true
-#> connection  false
-#> transaction false
-#> result      false
-#> verbose     true
+#> object          
+#>   id            null
+#>   verbose       true
+#>   validateQuery null
+#> database        
+#>   package       RPostgres
+#>   host          127.0.0.1
+#>   port          5432
+#>   dbname        mydb
+#> status          
+#>   driver        true
+#>   connection    false
+#>   transaction   false
+#>   result        false
 ```
 
 ``` r
 db$print()
-#> id          null
-#> package     RPostgres
-#> host        127.0.0.1
-#> port        5432
-#> dbname      mydb
-#> driver      true
-#> connection  false
-#> transaction false
-#> result      false
-#> verbose     true
+#> object          
+#>   id            null
+#>   verbose       true
+#>   validateQuery null
+#> database        
+#>   package       RPostgres
+#>   host          127.0.0.1
+#>   port          5432
+#>   dbname        mydb
+#> status          
+#>   driver        true
+#>   connection    false
+#>   transaction   false
+#>   result        false
 ```
 
 ``` r
 print(db)
-#> id          null
-#> package     RPostgres
-#> host        127.0.0.1
-#> port        5432
-#> dbname      mydb
-#> driver      true
-#> connection  false
-#> transaction false
-#> result      false
-#> verbose     true
+#> object          
+#>   id            null
+#>   verbose       true
+#>   validateQuery null
+#> database        
+#>   package       RPostgres
+#>   host          127.0.0.1
+#>   port          5432
+#>   dbname        mydb
+#> status          
+#>   driver        true
+#>   connection    false
+#>   transaction   false
+#>   result        false
 ```
 
 ``` r
 db$unloadDriver()
 #> dctr | Driver unload RPostgres
+```
+
+**Connection validation – Is the earlier opened database connection
+still open?**
+
+``` r
+db <- rocker::newDB() # New database handling object
+#> dctr | New object
+db$setupSQLite()
+#> Dctr | Driver load RSQLite
+db$print()
+#> object          
+#>   id            null
+#>   verbose       true
+#>   validateQuery null
+#> database        
+#>   package       RSQLite
+#>   dbname        :memory:
+#> status          
+#>   driver        true
+#>   connection    false
+#>   transaction   false
+#>   result        false
+```
+
+During connection setup, a validateQuery is looked up automatically.
+
+``` r
+db$connect()
+#> DCtr | Database connected
+db$print()
+#> object          
+#>   id            null
+#>   verbose       true
+#>   validateQuery SELECT 1
+#> database        
+#>   package       RSQLite
+#>   dbname        :memory:
+#> status          
+#>   driver        true
+#>   connection    true
+#>   transaction   false
+#>   result        false
+```
+
+Discovered validateQuery
+
+``` r
+db$validateQuery
+#> [1] "SELECT 1"
+```
+
+Validate connection
+
+``` r
+db$validateCon()
+#> DCtr | Connection valid true
+#> [1] TRUE
+```
+
+If required, validateQuery can be defined manually.
+
+``` r
+db$validateQuery <- "SELECT 2"
+db$validateCon()
+#> DCtr | Connection valid true
+#> [1] TRUE
+db$print()
+#> object          
+#>   id            null
+#>   verbose       true
+#>   validateQuery SELECT 2
+#> database        
+#>   package       RSQLite
+#>   dbname        :memory:
+#> status          
+#>   driver        true
+#>   connection    true
+#>   transaction   false
+#>   result        false
+```
+
+Clean up
+
+``` r
+db$disconnect()
+#> Dctr | Database disconnected
+db$validateCon()
+#> Dctr | Connection valid false
+#> [1] FALSE
+db$unloadDriver()
+#> dctr | Driver unload RSQLite
 ```
 
 # Additional packages and database types
@@ -572,30 +677,30 @@ db$.drv # 'DBI' DBIDriver-class
 
 ``` r
 db$getInfoDrv() # 'rocker' class function
-#> Dctr | Driver info 2.2.8 (driver.version), 3.36.0 (client.version)
+#> Dctr | Driver info 2.2.9 (driver.version), 3.37.0 (client.version)
 #> $driver.version
-#> [1] '2.2.8'
+#> [1] '2.2.9'
 #> 
 #> $client.version
-#> [1] '3.36.0'
+#> [1] '3.37.0'
 ```
 
 ``` r
 DBI::dbGetInfo(db$.drv) # Direct usage of 'DBI' function on 'rocker' class
 #> $driver.version
-#> [1] '2.2.8'
+#> [1] '2.2.9'
 #> 
 #> $client.version
-#> [1] '3.36.0'
+#> [1] '3.37.0'
 ```
 
 ``` r
 RSQLite::dbGetInfo(db$.drv) # Direct usage of driver package, 'RSQLite', function on 'rocker' class
 #> $driver.version
-#> [1] '2.2.8'
+#> [1] '2.2.9'
 #> 
 #> $client.version
-#> [1] '3.36.0'
+#> [1] '3.37.0'
 ```
 
 ## DBIConnection-class
@@ -611,9 +716,9 @@ db$.con # 'DBI' DBIConnection-class
 
 ``` r
 db$getInfoCon() # 'rocker' class function
-#> DCtr | Connection info 3.36.0 (db.version), :memory: (dbname), NA (username), NA (host), NA (port)
+#> DCtr | Connection info 3.37.0 (db.version), :memory: (dbname), NA (username), NA (host), NA (port)
 #> $db.version
-#> [1] "3.36.0"
+#> [1] "3.37.0"
 #> 
 #> $dbname
 #> [1] ":memory:"
@@ -631,7 +736,7 @@ db$getInfoCon() # 'rocker' class function
 ``` r
 DBI::dbGetInfo(db$.con) # Direct usage of 'DBI' function on 'rocker' class
 #> $db.version
-#> [1] "3.36.0"
+#> [1] "3.37.0"
 #> 
 #> $dbname
 #> [1] ":memory:"
@@ -649,7 +754,7 @@ DBI::dbGetInfo(db$.con) # Direct usage of 'DBI' function on 'rocker' class
 ``` r
 RSQLite::dbGetInfo(db$.con) # Direct usage of driver package, 'RSQLite', function on 'rocker' class
 #> $db.version
-#> [1] "3.36.0"
+#> [1] "3.37.0"
 #> 
 #> $dbname
 #> [1] ":memory:"
@@ -984,7 +1089,10 @@ db$unloadDriver()
 Please read the documentation of *rocker* class.
 
 ``` r
-help(rocker)
+help("rocker-package")
+help("rocker-R6-class")
+help("rocker-S3-functions")
+help("rocker-README")
 ```
 
 Reading of *DBI* package documentation is recommended.

@@ -1,11 +1,36 @@
 
+#' 'rocker' Database Interface R6 Class - S3 functions
+#'
+#' @description
+#' \link{R6} class interface for handling database connections using \link{DBI} package as backend. The class allows handling of connections to e.g. PostgreSQL, MariaDB and SQLite.
+#' Although rocker is a R6 class, functions can be also accesses in classical S3 way.
+#' @examples
+#' # New database handling object
+#' db <- rocker::newDB()
+#' # Setup SQLite database
+#' rocker::setupSQLite(db)
+#' # Open connection
+#' rocker::connect(db)
+#' # Write table
+#' rocker::writeTable(db, "mtcars", mtcars)
+#' # Get query
+#' output <- rocker::getQuery(db, "SELECT * FROM mtcars;")
+#' # Close connection
+#' rocker::disconnect(db)
+#' # Reset database handling object
+#' rocker::unloadDriver(db)
+#' @family rocker-S3-functions
+#' @family rocker
+#' @name rocker-S3-functions
+NULL
+
 # setupDriver ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #' Setup database driver and define connection parameters.
 #' @param db rocker object
 #' @param drv Driver object from suitable package e.g. \code{\link[RPostgres:Postgres]{RPostgres::Postgres()}}, \code{\link[RMariaDB:MariaDBDriver-class]{RMariaDB::MariaDB()}} and \code{\link[RSQLite:SQLite]{RSQLite::SQLite()}}
-#' @param ... Suitable parameters passed to \code{\link[DBI:dbConnect]{DBI::dbConnect()}} e.g. host, port, dbname, user and password
 #' @param protect Parameters to be hidden
+#' @param ... Suitable parameters passed to \code{\link[DBI:dbConnect]{DBI::dbConnect()}} e.g. host, port, dbname, user and password
 #' @return Invisible self
 #' @examples
 #' db <- rocker::newDB()
@@ -16,13 +41,14 @@
 #' )
 #' rocker::unloadDriver(db)
 #' @export
-setupDriver <- function (db, drv, ..., protect = c("password", "user")) {
+#' @family rocker-S3-functions
+setupDriver <- function(db, drv, protect = c("password", "user"), ...) {
   UseMethod("setupDriver", db)
 }
 
 #' @export
-setupDriver.rocker <- function(db, drv, ..., protect = c("password", "user")) {
-  db$setupDriver(drv, ..., protect)
+setupDriver.rocker <- function(db, drv, protect = c("password", "user"), ...) {
+  db$setupDriver(drv, protect, ...)
 }
 
 # setupPostgreSQL ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -35,8 +61,8 @@ setupDriver.rocker <- function(db, drv, ..., protect = c("password", "user")) {
 #' @param dbname Database name
 #' @param user User name
 #' @param password Password
-#' @param ... Optional, additional suitable parameters passed to \code{\link[DBI:dbConnect]{DBI::dbConnect()}}
 #' @param protect Parameters to be hidden
+#' @param ... Optional, additional suitable parameters passed to \code{\link[DBI:dbConnect]{DBI::dbConnect()}}
 #' @return Invisible self
 #' @examples
 #' db <- rocker::newDB()
@@ -47,13 +73,14 @@ setupDriver.rocker <- function(db, drv, ..., protect = c("password", "user")) {
 #' )
 #' rocker::unloadDriver(db)
 #' @export
-setupPostgreSQL <- function (db, host = "127.0.0.1", port = "5432", dbname = "mydb", user = "postgres", password = "password", ..., protect = c("password", "user")) {
+#' @family rocker-S3-functions
+setupPostgreSQL <- function(db, host = "127.0.0.1", port = "5432", dbname = "mydb", user = "postgres", password = "password", protect = c("password", "user"), ...) {
   UseMethod("setupPostgreSQL", db)
 }
 
 #' @export
-setupPostgreSQL.rocker <- function(db, host = "127.0.0.1", port = "5432", dbname = "mydb", user = "postgres", password = "password", ..., protect = c("password", "user")) {
-  db$setupPostgreSQL(host, port, dbname, user, password, ..., protect)
+setupPostgreSQL.rocker <- function(db, host = "127.0.0.1", port = "5432", dbname = "mydb", user = "postgres", password = "password", protect = c("password", "user"), ...) {
+  db$setupPostgreSQL(host, port, dbname, user, password, protect, ...)
 }
 
 # setupMariaDB ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -66,8 +93,8 @@ setupPostgreSQL.rocker <- function(db, host = "127.0.0.1", port = "5432", dbname
 #' @param dbname Database name
 #' @param user User name
 #' @param password Password
-#' @param ... Optional, additional suitable parameters passed to \code{\link[DBI:dbConnect]{DBI::dbConnect()}}
 #' @param protect Parameters to be hidden
+#' @param ... Optional, additional suitable parameters passed to \code{\link[DBI:dbConnect]{DBI::dbConnect()}}
 #' @return Invisible self
 #' @examples
 #' db <- rocker::newDB()
@@ -78,13 +105,14 @@ setupPostgreSQL.rocker <- function(db, host = "127.0.0.1", port = "5432", dbname
 #' )
 #' rocker::unloadDriver(db)
 #' @export
-setupMariaDB <- function (db, host = "127.0.0.1", port = "3306", dbname = "mydb", user = "root", password = "password", ..., protect = c("password", "user")) {
+#' @family rocker-S3-functions
+setupMariaDB <- function(db, host = "127.0.0.1", port = "3306", dbname = "mydb", user = "root", password = "password", protect = c("password", "user"), ...) {
   UseMethod("setupMariaDB", db)
 }
 
 #' @export
-setupMariaDB.rocker <- function(db, host = "127.0.0.1", port = "3306", dbname = "mydb", user = "root", password = "password", ..., protect = c("password", "user")) {
-  db$setupMariaDB(host, port, dbname, user, password, ..., protect)
+setupMariaDB.rocker <- function(db, host = "127.0.0.1", port = "3306", dbname = "mydb", user = "root", password = "password", protect = c("password", "user"), ...) {
+  db$setupMariaDB(host, port, dbname, user, password, protect, ...)
 }
 
 # setupSQLite ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -93,8 +121,8 @@ setupMariaDB.rocker <- function(db, host = "127.0.0.1", port = "3306", dbname = 
 #' Wrapper for setupDriver() function.
 #' @param db rocker object
 #' @param dbname Database name
-#' @param ... Optional, additional suitable parameters passed to \code{\link[DBI:dbConnect]{DBI::dbConnect()}}
 #' @param protect Parameters to be hidden
+#' @param ... Optional, additional suitable parameters passed to \code{\link[DBI:dbConnect]{DBI::dbConnect()}}
 #' @return Invisible self
 #' @examples
 #' db <- rocker::newDB()
@@ -104,13 +132,14 @@ setupMariaDB.rocker <- function(db, host = "127.0.0.1", port = "3306", dbname = 
 #' )
 #' rocker::unloadDriver(db)
 #' @export
-setupSQLite <- function (db, dbname = ":memory:", ..., protect = c("password", "user")) {
+#' @family rocker-S3-functions
+setupSQLite <- function(db, dbname = ":memory:", protect = c("password", "user"), ...) {
   UseMethod("setupSQLite", db)
 }
 
 #' @export
-setupSQLite.rocker <- function(db, dbname = ":memory:", ..., protect = c("password", "user")) {
-  db$setupSQLite(dbname, ..., protect)
+setupSQLite.rocker <- function(db, dbname = ":memory:", protect = c("password", "user"), ...) {
+  db$setupSQLite(dbname, protect, ...)
 }
 
 # unloadDriver ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -124,7 +153,8 @@ setupSQLite.rocker <- function(db, dbname = ":memory:", ..., protect = c("passwo
 #' rocker::setupSQLite(db)
 #' rocker::unloadDriver(db)
 #' @export
-unloadDriver <- function (db, ...) {
+#' @family rocker-S3-functions
+unloadDriver <- function(db, ...) {
   UseMethod("unloadDriver", db)
 }
 
@@ -145,7 +175,8 @@ unloadDriver.rocker <- function(db, ...) {
 #' rocker::canConnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-canConnect <- function (db, ...) {
+#' @family rocker-S3-functions
+canConnect <- function(db, ...) {
   UseMethod("canConnect", db)
 }
 
@@ -167,7 +198,8 @@ canConnect.rocker <- function(db, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-connect <- function (db, ...) {
+#' @family rocker-S3-functions
+connect <- function(db, ...) {
   UseMethod("connect", db)
 }
 
@@ -189,7 +221,8 @@ connect.rocker <- function(db, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-disconnect <- function (db, ...) {
+#' @family rocker-S3-functions
+disconnect <- function(db, ...) {
   UseMethod("disconnect", db)
 }
 
@@ -216,7 +249,8 @@ disconnect.rocker <- function(db, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-sendQuery <- function (db, statement, ...) {
+#' @family rocker-S3-functions
+sendQuery <- function(db, statement, ...) {
   UseMethod("sendQuery", db)
 }
 
@@ -244,7 +278,8 @@ sendQuery.rocker <- function(db, statement, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-getQuery <- function (db, statement, n = -1, ...) {
+#' @family rocker-S3-functions
+getQuery <- function(db, statement, n = -1, ...) {
   UseMethod("getQuery", db)
 }
 
@@ -270,7 +305,8 @@ getQuery.rocker <- function(db, statement, n = -1, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-sendStatement <- function (db, statement, ...) {
+#' @family rocker-S3-functions
+sendStatement <- function(db, statement, ...) {
   UseMethod("sendStatement", db)
 }
 
@@ -297,7 +333,8 @@ sendStatement.rocker <- function(db, statement, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-execute <- function (db, statement, ...) {
+#' @family rocker-S3-functions
+execute <- function(db, statement, ...) {
   UseMethod("execute", db)
 }
 
@@ -324,7 +361,8 @@ execute.rocker <- function(db, statement, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-fetch <- function (db, n = -1, ...) {
+#' @family rocker-S3-functions
+fetch <- function(db, n = -1, ...) {
   UseMethod("fetch", db)
 }
 
@@ -351,7 +389,8 @@ fetch.rocker <- function(db, n = -1, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-hasCompleted <- function (db, ...) {
+#' @family rocker-S3-functions
+hasCompleted <- function(db, ...) {
   UseMethod("hasCompleted", db)
 }
 
@@ -377,7 +416,8 @@ hasCompleted.rocker <- function(db, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-getRowsAffected <- function (db, ...) {
+#' @family rocker-S3-functions
+getRowsAffected <- function(db, ...) {
   UseMethod("getRowsAffected", db)
 }
 
@@ -404,7 +444,8 @@ getRowsAffected.rocker <- function(db, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-getRowCount <- function (db, ...) {
+#' @family rocker-S3-functions
+getRowCount <- function(db, ...) {
   UseMethod("getRowCount", db)
 }
 
@@ -430,7 +471,8 @@ getRowCount.rocker <- function(db, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-columnInfo <- function (db, ...) {
+#' @family rocker-S3-functions
+columnInfo <- function(db, ...) {
   UseMethod("columnInfo", db)
 }
 
@@ -456,7 +498,8 @@ columnInfo.rocker <- function(db, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-getStatement <- function (db, ...) {
+#' @family rocker-S3-functions
+getStatement <- function(db, ...) {
   UseMethod("getStatement", db)
 }
 
@@ -482,7 +525,8 @@ getStatement.rocker <- function(db, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-clearResult <- function (db, ...) {
+#' @family rocker-S3-functions
+clearResult <- function(db, ...) {
   UseMethod("clearResult", db)
 }
 
@@ -509,7 +553,8 @@ clearResult.rocker <- function(db, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-begin <- function (db, ...) {
+#' @family rocker-S3-functions
+begin <- function(db, ...) {
   UseMethod("begin", db)
 }
 
@@ -536,7 +581,8 @@ begin.rocker <- function(db, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-commit <- function (db, ...) {
+#' @family rocker-S3-functions
+commit <- function(db, ...) {
   UseMethod("commit", db)
 }
 
@@ -563,7 +609,8 @@ commit.rocker <- function(db, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-rollback <- function (db, ...) {
+#' @family rocker-S3-functions
+rollback <- function(db, ...) {
   UseMethod("rollback", db)
 }
 
@@ -584,7 +631,8 @@ rollback.rocker <- function(db, ...) {
 #' rocker::getInfoDrv(db)
 #' rocker::unloadDriver(db)
 #' @export
-getInfoDrv <- function (db, ...) {
+#' @family rocker-S3-functions
+getInfoDrv <- function(db, ...) {
   UseMethod("getInfoDrv", db)
 }
 
@@ -607,7 +655,8 @@ getInfoDrv.rocker <- function(db, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-getInfoCon <- function (db, ...) {
+#' @family rocker-S3-functions
+getInfoCon <- function(db, ...) {
   UseMethod("getInfoCon", db)
 }
 
@@ -633,7 +682,8 @@ getInfoCon.rocker <- function(db, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-getInfoRes <- function (db, ...) {
+#' @family rocker-S3-functions
+getInfoRes <- function(db, ...) {
   UseMethod("getInfoRes", db)
 }
 
@@ -646,29 +696,32 @@ getInfoRes.rocker <- function(db, ...) {
 
 #' Check driver object.
 #' @param db rocker object
+#' @param onLostNull TRUE or FALSE. If driver lost, set .drv to NULL
 #' @param ... Optional, additional suitable parameters passed to \code{\link[DBI:dbIsValid]{DBI::dbIsValid()}}
-#' @return TRUE of FALSE
+#' @return TRUE or FALSE
 #' @examples
 #' db <- rocker::newDB()
 #' rocker::setupSQLite(db)
 #' rocker::isValidDrv(db)
 #' rocker::unloadDriver(db)
 #' @export
-isValidDrv <- function (db, ...) {
+#' @family rocker-S3-functions
+isValidDrv <- function(db, onLostNull = FALSE, ...) {
   UseMethod("isValidDrv", db)
 }
 
 #' @export
-isValidDrv.rocker <- function(db, ...) {
-  db$isValidDrv(...)
+isValidDrv.rocker <- function(db, onLostNull = FALSE, ...) {
+  db$isValidDrv(onLostNull, ...)
 }
 
 # isValidCon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #' Check connection object.
 #' @param db rocker object
+#' @param onLostNull TRUE or FALSE. If connection lost, set .con to NULL
 #' @param ... Optional, additional suitable parameters passed to \code{\link[DBI:dbIsValid]{DBI::dbIsValid()}}
-#' @return TRUE of FALSE
+#' @return TRUE or FALSE
 #' @examples
 #' db <- rocker::newDB()
 #' rocker::setupSQLite(db)
@@ -677,21 +730,23 @@ isValidDrv.rocker <- function(db, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-isValidCon <- function (db, ...) {
+#' @family rocker-S3-functions
+isValidCon <- function(db, onLostNull = FALSE, ...) {
   UseMethod("isValidCon", db)
 }
 
 #' @export
-isValidCon.rocker <- function(db, ...) {
-  db$isValidCon(...)
+isValidCon.rocker <- function(db, onLostNull = FALSE, ...) {
+  db$isValidCon(onLostNull, ...)
 }
 
 # isValidRes ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #' Check result object.
 #' @param db rocker object
+#' @param onLostNull TRUE or FALSE. If result lost, set .res to NULL
 #' @param ... Optional, additional suitable parameters passed to \code{\link[DBI:dbIsValid]{DBI::dbIsValid()}}
-#' @return TRUE of FALSE
+#' @return TRUE or FALSE
 #' @examples
 #' db <- rocker::newDB()
 #' rocker::setupSQLite(db)
@@ -703,13 +758,40 @@ isValidCon.rocker <- function(db, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-isValidRes <- function (db, ...) {
+#' @family rocker-S3-functions
+isValidRes <- function(db, onLostNull = FALSE, ...) {
   UseMethod("isValidRes", db)
 }
 
 #' @export
-isValidRes.rocker <- function(db, ...) {
-  db$isValidRes(...)
+isValidRes.rocker <- function(db, onLostNull = FALSE, ...) {
+  db$isValidRes(onLostNull, ...)
+}
+
+# validateCon ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#' Check if an earlier opened connection is still open.
+#' @param db rocker object
+#' @param statement Optional SQL statement. If not set default validateQuery will be used.
+#' @param onLostNull TRUE or FALSE. If connection lost, set .con to NULL
+#' @param ... Not used yet
+#' @return TRUE or FALSE
+#' @examples
+#' db <- rocker::newDB()
+#' rocker::setupSQLite(db)
+#' rocker::connect(db)
+#' rocker::validateCon(db)
+#' rocker::disconnect(db)
+#' rocker::unloadDriver(db)
+#' @export
+#' @family rocker-S3-functions
+validateCon <- function(db, statement = NULL, onLostNull = FALSE, ...) {
+  UseMethod("validateCon", db)
+}
+
+#' @export
+validateCon.rocker <- function(db, statement = NULL, onLostNull = FALSE, ...) {
+  db$validateCon(statement, onLostNull, ...)
 }
 
 # createTable ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -728,7 +810,8 @@ isValidRes.rocker <- function(db, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-createTable <- function (db, name, fields, ...) {
+#' @family rocker-S3-functions
+createTable <- function(db, name, fields, ...) {
   UseMethod("createTable", db)
 }
 
@@ -754,7 +837,8 @@ createTable.rocker <- function(db, name, fields, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-appendTable <- function (db, name, value, ...) {
+#' @family rocker-S3-functions
+appendTable <- function(db, name, value, ...) {
   UseMethod("appendTable", db)
 }
 
@@ -779,7 +863,8 @@ appendTable.rocker <- function(db, name, value, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-writeTable <- function (db, name, value, ...) {
+#' @family rocker-S3-functions
+writeTable <- function(db, name, value, ...) {
   UseMethod("writeTable", db)
 }
 
@@ -804,7 +889,8 @@ writeTable.rocker <- function(db, name, value, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-readTable <- function (db, name, ...) {
+#' @family rocker-S3-functions
+readTable <- function(db, name, ...) {
   UseMethod("readTable", db)
 }
 
@@ -829,7 +915,8 @@ readTable.rocker <- function(db, name, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-removeTable <- function (db, name, ...) {
+#' @family rocker-S3-functions
+removeTable <- function(db, name, ...) {
   UseMethod("removeTable", db)
 }
 
@@ -854,7 +941,8 @@ removeTable.rocker <- function(db, name, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-existsTable <- function (db, name, ...) {
+#' @family rocker-S3-functions
+existsTable <- function(db, name, ...) {
   UseMethod("existsTable", db)
 }
 
@@ -879,7 +967,8 @@ existsTable.rocker <- function(db, name, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-listFields <- function (db, name, ...) {
+#' @family rocker-S3-functions
+listFields <- function(db, name, ...) {
   UseMethod("listFields", db)
 }
 
@@ -903,7 +992,8 @@ listFields.rocker <- function(db, name, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-listObjects <- function (db, ...) {
+#' @family rocker-S3-functions
+listObjects <- function(db, ...) {
   UseMethod("listObjects", db)
 }
 
@@ -927,7 +1017,8 @@ listObjects.rocker <- function(db, ...) {
 #' rocker::disconnect(db)
 #' rocker::unloadDriver(db)
 #' @export
-listTables <- function (db, ...) {
+#' @family rocker-S3-functions
+listTables <- function(db, ...) {
   UseMethod("listTables", db)
 }
 
