@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function(e) {
     </style>
 
 
+
 <style type="text/css">
   code {
     white-space: pre;
@@ -120,13 +121,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -330,7 +338,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">Initiation of SQL database connections in R6 rocker class</h1>
+<h1 class="title toc-ignore">Initiation of SQL database connections in
+R6 rocker class</h1>
 <h4 class="author">Nikolaus Pawlowski</h4>
 
 
@@ -385,7 +394,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>db<span class="sc">$</span><span class="fu">disconnect</span>() <span class="co"># Close connection</span></span>
 <span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Dctr | Database disconnected</span></span></code></pre></div>
 <p><strong>Example 3</strong></p>
-<p>Function getQuery() is a combination of functions sendQuery(), fetch() and clearResult().</p>
+<p>Function getQuery() is a combination of functions sendQuery(),
+fetch() and clearResult().</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>db<span class="sc">$</span><span class="fu">connect</span>() <span class="co"># Open connection</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; DCtr | Database connected</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>db<span class="sc">$</span><span class="fu">sendQuery</span>(<span class="st">&quot;SELECT * FROM mtcars;&quot;</span>) <span class="co"># Send query</span></span>

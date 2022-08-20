@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function(e) {
     </style>
 
 
+
 <style type="text/css">
   code {
     white-space: pre;
@@ -120,13 +121,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -330,7 +338,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">Usage of relational databases (SQLite, PostgreSQL and MariaDB) with R6 rocker class</h1>
+<h1 class="title toc-ignore">Usage of relational databases (SQLite,
+PostgreSQL and MariaDB) with R6 rocker class</h1>
 <h4 class="author">Nikolaus Pawlowski</h4>
 
 
@@ -338,10 +347,13 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <hr />
 <div id="additional-packages-and-database-types" class="section level1">
 <h1>Additional packages and database types</h1>
-<p>The listed packages are required for some functions of <em>rocker</em>.</p>
+<p>The listed packages are required for some functions of
+<em>rocker</em>.</p>
 <div id="rsqlite-package" class="section level2">
 <h2><em>RSQLite</em> package</h2>
-<p><a href="https://github.com/r-dbi/RSQLite"><em>RSQLite</em></a> package for handling of SQLite database connections. It is required for the setupSQLite() function of <em>rocker</em> class.</p>
+<p><a href="https://github.com/r-dbi/RSQLite"><em>RSQLite</em></a>
+package for handling of SQLite database connections. It is required for
+the setupSQLite() function of <em>rocker</em> class.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;RSQLite&quot;</span>)</span></code></pre></div>
 <p><strong>Setup database</strong></p>
 <p>Option 1</p>
@@ -366,7 +378,9 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="rpostgres-package" class="section level2">
 <h2><em>RPostgres</em> package</h2>
-<p><a href="https://github.com/r-dbi/RPostgres"><em>RPostgres</em></a> package for handling of PostgreSQL database connections. It is required for the setupPostgreSQL() function of <em>rocker</em> class.</p>
+<p><a href="https://github.com/r-dbi/RPostgres"><em>RPostgres</em></a>
+package for handling of PostgreSQL database connections. It is required
+for the setupPostgreSQL() function of <em>rocker</em> class.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;RPostgres&quot;</span>)</span></code></pre></div>
 <p><strong>Setup database</strong></p>
 <p>Option 1</p>
@@ -393,7 +407,9 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="rmariadb-package" class="section level2">
 <h2><em>RMariaDB</em> package</h2>
-<p><a href="https://github.com/r-dbi/RMariaDB"><em>RMariaDB</em></a> package for handling of MariaDB and MySQL database connections. It is required for the setupMariaDB() function of <em>rocker</em> class.</p>
+<p><a href="https://github.com/r-dbi/RMariaDB"><em>RMariaDB</em></a>
+package for handling of MariaDB and MySQL database connections. It is
+required for the setupMariaDB() function of <em>rocker</em> class.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;RMariaDB&quot;</span>)</span></code></pre></div>
 <p><strong>Setup database</strong></p>
 <p>Option 1</p>
@@ -420,7 +436,9 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="crayon-package" class="section level2">
 <h2><em>crayon</em> package</h2>
-<p>The <a href="https://github.com/r-lib/crayon"><em>crayon</em></a> package is required for colored terminal output. If missing terminal output is monochrome.</p>
+<p>The <a href="https://github.com/r-lib/crayon"><em>crayon</em></a>
+package is required for colored terminal output. If missing terminal
+output is monochrome.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;crayon&quot;</span>)</span></code></pre></div>
 </div>
 </div>

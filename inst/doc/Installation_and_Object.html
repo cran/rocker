@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function(e) {
     </style>
 
 
+
 <style type="text/css">
   code {
     white-space: pre;
@@ -120,13 +121,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -330,7 +338,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">Installation and set up of R6 rocker object</h1>
+<h1 class="title toc-ignore">Installation and set up of R6 rocker
+object</h1>
 <h4 class="author">Nikolaus Pawlowski</h4>
 
 
@@ -378,7 +387,9 @@ D                          = Driver     (D = loaded,    d = not set)
        Driver load RSQLite = Message text
 </code></pre>
 <p><strong>Optional object ID</strong></p>
-<p>Optionally, rocker object can be labeled with an ID. This can be helpful in case terminal output of multiple rocker objects need to be distinguished.</p>
+<p>Optionally, rocker object can be labeled with an ID. This can be
+helpful in case terminal output of multiple rocker objects need to be
+distinguished.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>db1 <span class="ot">&lt;-</span> rocker<span class="sc">::</span><span class="fu">newDB</span>(<span class="at">id =</span> <span class="st">&quot;myDB 1&quot;</span>) <span class="co"># New database handling object with ID</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; myDB 1 | dctr | New object id myDB 1</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>db2 <span class="ot">&lt;-</span> rocker<span class="sc">::</span><span class="fu">newDB</span>(<span class="at">id =</span> <span class="st">&quot;myDB 2&quot;</span>) <span class="co"># New database handling object with ID</span></span>
@@ -402,7 +413,8 @@ D                          = Driver     (D = loaded,    d = not set)
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>db1<span class="sc">$</span><span class="fu">unloadDriver</span>()</span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; newID 1 | dctr | Driver unload RSQLite</span></span></code></pre></div>
 <p><strong>Object properties</strong></p>
-<p>Object properties are stored in the info field and can be displayed by print function.</p>
+<p>Object properties are stored in the info field and can be displayed
+by print function.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>db <span class="ot">&lt;-</span> rocker<span class="sc">::</span><span class="fu">newDB</span>() <span class="co"># New database handling object</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; dctr | New object</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>db<span class="sc">$</span><span class="fu">setupPostgreSQL</span>()</span>
@@ -466,7 +478,8 @@ D                          = Driver     (D = loaded,    d = not set)
 <span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   result        false</span></span></code></pre></div>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>db<span class="sc">$</span><span class="fu">unloadDriver</span>()</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; dctr | Driver unload RPostgres</span></span></code></pre></div>
-<p><strong>Connection validation – Is the earlier opened database connection still open?</strong></p>
+<p><strong>Connection validation – Is the earlier opened database
+connection still open?</strong></p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>db <span class="ot">&lt;-</span> rocker<span class="sc">::</span><span class="fu">newDB</span>() <span class="co"># New database handling object</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; dctr | New object</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>db<span class="sc">$</span><span class="fu">setupSQLite</span>()</span>
@@ -484,7 +497,8 @@ D                          = Driver     (D = loaded,    d = not set)
 <span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   connection    false</span></span>
 <span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   transaction   false</span></span>
 <span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   result        false</span></span></code></pre></div>
-<p>During connection setup, a validateQuery is looked up automatically.</p>
+<p>During connection setup, a validateQuery is looked up
+automatically.</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>db<span class="sc">$</span><span class="fu">connect</span>()</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; DCtr | Database connected</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>db<span class="sc">$</span><span class="fu">print</span>()</span>
