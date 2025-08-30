@@ -1,15 +1,15 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 
-## ---- eval = FALSE------------------------------------------------------------
-#  install.packages("rocker")
+## ----eval = FALSE-------------------------------------------------------------
+# install.packages("rocker")
 
-## ---- eval = FALSE------------------------------------------------------------
-#  install.packages("devtools")
-#  devtools::install_github("nikolaus77/rocker")
+## ----eval = FALSE-------------------------------------------------------------
+# install.packages("devtools")
+# devtools::install_github("nikolaus77/rocker")
 
 ## -----------------------------------------------------------------------------
 db <- rocker::newDB() # New database handling object
@@ -92,9 +92,9 @@ db$disconnect()
 db$validateCon()
 db$unloadDriver()
 
-## ---- eval = FALSE------------------------------------------------------------
-#  help("rocker-package")
-#  help("rocker-R6-class")
-#  help("rocker-S3-functions")
-#  help("rocker-README")
+## ----eval = FALSE-------------------------------------------------------------
+# help("rocker-package")
+# help("rocker-R6-class")
+# help("rocker-S3-functions")
+# help("rocker-README")
 
